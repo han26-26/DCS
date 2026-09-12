@@ -226,7 +226,7 @@ if submitted_q:
                     else:
                         st.warning("⚠️ အချက်အလက်အားလုံးကို ပြည့်စုံစွာ ဖြည့်စွက်ပေးပါ။")
                 
-    elif st.session_state.user_role == "student":
+elif st.session_state.user_role == "student":
         st.title("✍️ Student Examination Dashboard ")
         st.write(f"Active Session User: {st.session_state.username}")
         
