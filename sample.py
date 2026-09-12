@@ -192,7 +192,7 @@ with st.form("add_question_form"):
 with col_a:
                     opt1 = st.text_input("Option A")
                     opt2 = st.text_input("Option B")
-                with col_b:
+with col_b:
                     opt3 = st.text_input("Option C")
                     opt4 = st.text_input("Option D")
                 
