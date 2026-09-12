@@ -270,3 +270,21 @@ with col_a:
                 for i, q in enumerate(all_questions):
                     st.markdown(f"##### Q{i+1}: {q['q']}")
                     user_answers[i] = st.radio(f"Select answer for Q{i+1}:", q['options'], index=None, key=f"q_{i}")
+st.write("---")
+                    
+                if st.button("Final Submit & Lock Account", type="primary"):
+                    for i, q in enumerate(all_questions):
+                        if i in user_answers and user_answers[i] is not None:
+                            if str(user_answers[i]) == str(q['correct']):
+                                score += 1
+                    
+                    save_result_to_sheet(st.session_state.username, score)
+                    st.session_state.submitted = True
+                    st.session_state.final_score = score
+                    st.rerun()
+            else:
+                st.warning("⚠️ မေးခွန်းများ Google Sheet ထဲတွင် မတွေ့ရှိရသေးပါ။ ကျေးဇူးပြု၍ Sheet2 ကို စစ်ဆေးပါ။")
+        else:
+            disp_score = st.session_state.final_score if 'final_score' in st.session_state else 0
+            st.success(f"🎉 သင်၏ ရမှတ်မှာ {disp_score}/{len(all_questions)} ဖြစ်ပြီး စနစ်မှ သိမ်းဆည်းကာ Lock ချထားပြီး ဖြစ်ပါသည်။")
+            st.balloons()
