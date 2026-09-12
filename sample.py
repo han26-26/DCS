@@ -190,3 +190,83 @@ st.info("💡 ဤနေရာမှ တဆင့် Google Sheet (Sheet2) သိ
             with st.form("add_question_form"):
                 new_q = st.text_area("မေးခွန်း (Question)")
                 col_a, col_b = st.columns(2)
+with col_a:
+                    opt1 = st.text_input("Option A")
+                    opt2 = st.text_input("Option B")
+                with col_b:
+                    opt3 = st.text_input("Option C")
+                    opt4 = st.text_input("Option D")
+                
+                correct_ans = st.text_input("အမှန်ဖြေ (Correct Answer - အထက်ပါ Options များထဲမှ တစ်ခုအတိုင်း အတိအကျရေးပါ)")
+                
+                submitted_q = st.form_submit_button("Google Sheet သို့ မေးခွန်းအသစ် ထည့်မည်")
+                
+                if submitted_q:
+                    if new_q and opt1 and opt2 and opt3 and opt4 and correct_ans:
+                        try:
+                            payload = json.dumps({
+                                "action": "add_question",
+                                "q": new_q,
+                                "opt1": opt1,
+                                "opt2": opt2,
+                                "opt3": opt3,
+                                "opt4": opt4,
+                                "correct": correct_ans
+                            }).encode('utf-8')
+                            
+                            req = urllib.request.Request(WEB_APP_URL, data=payload, headers={'Content-Type': 'application/json'}, method='POST')
+                            response = urllib.request.urlopen(req, timeout=5)
+                            res_data = json.loads(response.read().decode('utf-8'))
+                            
+                            if res_data.get("status") == "success":
+                                st.success("✅ မေးခွန်းအသစ် Google Sheet သို့ အောင်မြင်စွာ ရောက်ရှိသွားပါပြီ။")
+                                time.sleep(1)
+                                st.rerun()
+                            else:
+                                st.error("❌ မေးခွန်းထည့်သွင်းမှု မအောင်မြင်ပါ။")
+                        except Exception as e:
+                            st.error(f"⚠️ ချိတ်ဆက်မှု အမှားအယွင်း ရှိနေပါသည်: {e}")
+                    else:
+                        st.warning("⚠️ အချက်အလက်အားလုံးကို ပြည့်စုံစွာ ဖြည့်စွက်ပေးပါ။")
+                
+    elif st.session_state.user_role == "student":
+        st.title("✍️ Student Examination Dashboard ")
+        st.write(f"Active Session User: {st.session_state.username}")
+        
+        all_questions = get_questions_from_sheet()
+        
+        if not st.session_state.submitted:
+            if "start_time" in st.session_state:
+                end_time = st.session_state.start_time + timedelta(minutes=EXAM_DURATION_MINUTES)
+                now = get_mm_now()
+                remaining = end_time - now
+                seconds_left = int(remaining.total_seconds())
+                
+                if seconds_left <= 0:
+                    st.error("⏳ အချိန်ပြည့်သွားပါပြီ။ သင်ရွေးချယ်ထားသမျှ အဖြေများကို စနစ်မှ အလိုအလျောက် သိမ်းဆည်းနေပါသည်...")
+                    time.sleep(1)
+                    auto_score = 0
+                    for i, q in enumerate(all_questions):
+                        radio_key = f"q_{i}"
+                        if radio_key in st.session_state and st.session_state[radio_key] == q['correct']:
+                            auto_score += 1
+                    save_result_to_sheet(st.session_state.username, auto_score)
+                    st.session_state.submitted = True
+                    st.session_state.final_score = auto_score
+                    st.rerun()
+                
+                mins, secs = divmod(seconds_left, 60)
+                timer_text = f"⏳ ကျန်ရှိချိန် - {mins:02d}:{secs:02d}"
+                
+                if seconds_left < 60:
+                    st.sidebar.error(timer_text)
+                else:
+                    st.sidebar.warning(timer_text)
+            
+            if all_questions:
+                score = 0
+                user_answers = {}
+                
+                for i, q in enumerate(all_questions):
+                    st.markdown(f"##### Q{i+1}: {q['q']}")
+                    user_answers[i] = st.radio(f"Select answer for Q{i+1}:", q['options'], index=None, key=f"q_{i}")
