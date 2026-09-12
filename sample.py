@@ -104,4 +104,84 @@ if not st.session_state.logged_in:
     if st.button("Secure Login", type="primary"):
         entered_user = username.strip()
         entered_pass = str(password).strip()
+# Google Sheet (Sheet3) မှ User အားလုံးကို Header မပါဘဲ တိုက်ရိုက်ဖတ်ယူခြင်း
+        all_users = {}
+        try:
+            # header=None ထည့်လိုက်ခြင်းဖြင့် ပထမဆုံး row ကို header လို့ မသတ်မှတ်တော့ဘဲ ဒေတာအဖြစ် အကုန်ဖတ်မည်
+            df_users = pd.read_csv(CSV_USERS_URL, header=None)
+            if df_users is not None and not df_users.empty:
+                for _, row in df_users.iterrows():
+                    if len(row) >= 2 and pd.notna(row.iloc[0]) and pd.notna(row.iloc[1]):
+                        u_val = str(row.iloc[0]).strip()
+                        p_val = str(row.iloc[1]).strip()
+                        # 'Username' ဆိုတဲ့ ခေါင်းစဉ်ပါလာလျှင် ကျော်ရန်
+                        if u_val.lower() != "username":
+                            all_users[u_val] = p_val
+        except Exception as e:
+            pass
+
+        # Login စစ်ဆေးခြင်း
+        if entered_user in all_users and entered_pass == all_users[entered_user]:
+            if entered_user.lower() == "admin":
+                st.session_state.logged_in = True
+                st.session_state.user_role = "admin"
+                st.session_state.username = "admin"
+                st.rerun()
+            else:
+                sheet_data = get_results_from_sheet()
+                submitted_users = [str(r[1]) for r in sheet_data if len(r) > 1]
+                submitted_users += [str(r[1]) for r in st.session_state.global_results_pool]
+                
+                if entered_user in submitted_users:
+                    st.error(f"❌ Access Denied: User '{entered_user}' has already submitted the exam. Account Locked.")
+                else:
+                    st.session_state.logged_in = True
+                    st.session_state.user_role = "student"
+                    st.session_state.username = entered_user
+                    st.session_state.submitted = False
+                    st.session_state.start_time = get_mm_now()
+                    st.rerun()
+        else:
+            st.error("Invalid credentials. Please try again.")
+else:
+    if st.sidebar.button("Log Out"):
+        st.session_state.logged_in = False
+        st.session_state.user_role = None
+        st.session_state.username = None
+        st.session_state.submitted = False
+        if "start_time" in st.session_state: del st.session_state.start_time
+        st.rerun()
         
+    if st.session_state.user_role == "admin":
+        st.title("👩‍🏫 Administrative Control Panel: Question Bank & Result Management")
+        
+        st.sidebar.subheader("⚙️ System Control")
+        if st.sidebar.button("♻️ Force Reboot System", type="secondary"):
+            st.session_state.global_results_pool = []
+            st.sidebar.success("Memory Pool Cleared Successfully!")
+            time.sleep(0.5)
+            st.rerun()
+        
+        tab1, tab2 = st.tabs(["📝 View Results Logs", "➕ Add Secure Questions"])
+        
+        with tab1:
+            st.subheader("🔒 Terminal Live Records")
+            db_data = get_results_from_sheet()
+            display_data = []
+            
+            for r in db_data:
+                if len(r) >= 3 and str(r[0]).lower() != "timestamp":
+                    display_data.append({"Timestamp": r[0], "Student Username": r[1], "Score Obtained": f"{r[2]} Points"})
+            
+            for r in st.session_state.global_results_pool:
+                row_dict = {"Timestamp": r[0], "Student Username": r[1], "Score Obtained": f"{r[2]} Points"}
+                if row_dict not in display_data:
+                    display_data.append(row_dict)
+            
+            if display_data:
+                st.table(display_data)
+            else:
+                st.info("💡 ဖြေဆိုထားသော ကျောင်းသား မှတ်တမ်း မရှိသေးပါ။")
+                
+        with tab2:
+            st.subheader("➕ Inject New Question to Sheet2")        
