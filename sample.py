@@ -268,8 +268,7 @@ elif st.session_state.user_role == "student":
                     st.markdown(f"##### Q{i+1}: {q['q']}")
                     user_answers[i] = st.radio(f"Select answer for Q{i+1}:", q['options'], index=None, key=f"q_{i}")
 st.write("---")
-                    
-                if st.button("Final Submit & Lock Account", type="primary"):
+if st.button("Final Submit & Lock Account", type="primary"):
                     for i, q in enumerate(all_questions):
                         if i in user_answers and user_answers[i] is not None:
                             if str(user_answers[i]) == str(q['correct']):
