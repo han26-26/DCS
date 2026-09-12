@@ -198,7 +198,7 @@ with col_b:
                 
 correct_ans = st.text_input("အမှန်ဖြေ (Correct Answer - အထက်ပါ Options များထဲမှ တစ်ခုအတိုင်း အတိအကျရေးပါ)")
                 
-                submitted_q = st.form_submit_button("Google Sheet သို့ မေးခွန်းအသစ် ထည့်မည်")
+submitted_q = st.form_submit_button("Google Sheet သို့ မေးခွန်းအသစ် ထည့်မည်")
                 
                 if submitted_q:
                     if new_q and opt1 and opt2 and opt3 and opt4 and correct_ans:
