@@ -279,7 +279,7 @@ if st.button("Final Submit & Lock Account", type="primary"):
                     st.session_state.final_score = score
                     st.rerun()
 else:
-                st.warning("⚠️ မေးခွန်းများ Google Sheet ထဲတွင် မတွေ့ရှိရသေးပါ။ ကျေးဇူးပြု၍ Sheet2 ကို စစ်ဆေးပါ။")
+    st.warning("⚠️ မေးခွန်းများ Google Sheet ထဲတွင် မတွေ့ရှိရသေးပါ။ ကျေးဇူးပြု၍ Sheet2 ကို စစ်ဆေးပါ။")
         else:
             disp_score = st.session_state.final_score if 'final_score' in st.session_state else 0
             st.success(f"🎉 သင်၏ ရမှတ်မှာ {disp_score}/{len(all_questions)} ဖြစ်ပြီး စနစ်မှ သိမ်းဆည်းကာ Lock ချထားပြီး ဖြစ်ပါသည်။")
