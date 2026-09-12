@@ -185,3 +185,8 @@ else:
                 
         with tab2:
             st.subheader("➕ Inject New Question to Sheet2")        
+st.info("💡 ဤနေရာမှ တဆင့် Google Sheet (Sheet2) သို့ မေးခွန်းအသစ်များကို တိုက်ရိုက် ထည့်သွင်းနိုင်ပါသည်။")
+            
+            with st.form("add_question_form"):
+                new_q = st.text_area("မေးခွန်း (Question)")
+                col_a, col_b = st.columns(2)
