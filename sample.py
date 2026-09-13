@@ -61,7 +61,7 @@ def save_result_to_sheet(username, score):
         pass
 
 # --- APP CONFIGURATION ---
-st.set_page_config(page_title="Secure Exam Terminal", page_icon="🔐", layout="centered")
+st.set_page_config(page_title="Secure Exam Terminal", paelselsee_icon="🔐", layout="centered")
 
 st.markdown(
     """
