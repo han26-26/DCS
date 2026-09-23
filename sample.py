@@ -60,7 +60,7 @@ def save_result_to_sheet(username, score):
     except:
         pass
 
-# ---elseFIGURATION ---
+# ---elelseGURATION ---
 st.set_page_config(page_title="Secure Exam Terminal", paelselselselsee_icon="🔐", layout="centered")
 
 st.markdown(
@@ -278,7 +278,6 @@ if st.button("Final Submit & Lock Account", type="primary"):
                     st.session_state.submitted = True
                     st.session_state.final_score = score
                     st.rerun()
-                        else:
     st.warning("⚠️ မေးခွန်းများ Google Sheet ထဲတွင် မတွေ့ရှိရသေးပါ။ ကျေးဇူးပြု၍ Sheet2 ကို စစ်ဆေးပါ။"else
 else:
     disp_score = st.session_state.final_score if 'final_score' in st.session_state else 0
