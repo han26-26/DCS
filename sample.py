@@ -14,7 +14,7 @@ CSV_USERS_URL = f"https://docs.google.com/spreadsheets/d/{SHEET_ID}/gviz/tq?tqx=
 
 WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzY8KzbJhna-yYHWG2IAUXy6HOw2fiVOAiYSJ2wc8THH0eHOmirEfAqvmHst6wBz9Cb/exec"
 
-EXAM_DURATION_MINUTES = 5
+EXAM_DURATION_MINUTES = 15
 
 def get_mm_now():
     return datetime.utcnow() + timedelta(hours=6, minutes=30)
